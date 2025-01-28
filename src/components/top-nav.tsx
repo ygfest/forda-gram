@@ -1,7 +1,6 @@
-"use client";
-
 import Link from "next/link";
-import ModeToggle from "./mode-toggle";
+import DesktopNav from "./desktop-nav";
+import MobileNav from "./mobile-nav";
 
 function TopNavigation() {
   return (
@@ -13,7 +12,8 @@ function TopNavigation() {
               FordaGram
             </Link>
           </div>
-          <ModeToggle />
+          <DesktopNav />
+          <MobileNav />
         </div>
       </div>
     </nav>
