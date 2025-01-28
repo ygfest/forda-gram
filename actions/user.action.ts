@@ -30,3 +30,29 @@ export async function syncUser() {
     console.error("Error syncing users data:", error);
   }
 }
+
+export async function deleteUsefromDb() {
+  try {
+    const { userId } = await auth();
+
+    if (!userId) return;
+
+    const deletedUser = await prisma.user.delete({
+      where: {
+        id: userId,
+      },
+    });
+
+    return deletedUser;
+  } catch (error) {
+    console.error("Error Deleting user:", error);
+  }
+}
+
+export async function getUserDataFromDb(clerkId: string) {
+  return await prisma.user.findUnique({
+    where: {
+      clerkId,
+    },
+  });
+}
