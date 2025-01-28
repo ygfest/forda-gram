@@ -1,8 +1,12 @@
 import Link from "next/link";
 import DesktopNav from "./desktop-nav";
 import MobileNav from "./mobile-nav";
+import { currentUser } from "@clerk/nextjs/server";
+import { syncUser } from "../../actions/user.action";
 
-function TopNavigation() {
+async function TopNavigation() {
+  const user = await currentUser();
+  if (user) await syncUser();
   return (
     <nav className="sticky top-0 bg-background/90 backdrop-blur border-b z-50 ">
       <div className="max-w-7xl mx-auto px-4">
