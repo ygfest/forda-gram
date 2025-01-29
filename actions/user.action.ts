@@ -50,9 +50,18 @@ export async function deleteUsefromDb() {
 }
 
 export async function getUserDataFromDb(clerkId: string) {
-  return await prisma.user.findUnique({
+  return prisma.user.findUnique({
     where: {
       clerkId,
+    },
+    include: {
+      _count: {
+        select: {
+          followers: true,
+          following: true,
+          posts: true,
+        },
+      },
     },
   });
 }
