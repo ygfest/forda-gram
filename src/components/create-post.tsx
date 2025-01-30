@@ -7,6 +7,8 @@ import { useUser } from "@clerk/nextjs";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { ImageIcon, Loader2Icon, SendIcon } from "lucide-react";
+import { createPost } from "../../actions/post.action";
+import toast from "react-hot-toast";
 
 function CreatePost() {
   const [content, setContent] = useState("");
@@ -15,7 +17,24 @@ function CreatePost() {
   const [isPosting, setIsPosting] = useState(false);
   const { user } = useUser();
 
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    if (!content.trim()) return;
+
+    setIsPosting(true);
+    try {
+      const result = await createPost(content, imageUrl);
+      if (result.success) {
+        setContent("");
+        setImageUrl("");
+        setShowImageUpload(false);
+        toast.success("Post created successfully");
+      }
+    } catch (error) {
+      toast.error("Error creating post");
+    } finally {
+      setIsPosting(false);
+    }
+  };
   return (
     <Card className="mb-6">
       <CardContent className="pt-6">
@@ -57,6 +76,7 @@ function CreatePost() {
               ) : (
                 <>
                   <SendIcon className="size-4 mr-2" />
+                  Post
                 </>
               )}
             </Button>
