@@ -1,3 +1,4 @@
+import CreatePost from "@/components/create-post";
 import DeleteUser from "@/components/delete-user";
 import SideBarSection from "@/components/side-bar-section";
 import { Button } from "@/components/ui/button";
@@ -9,15 +10,9 @@ export default async function Home() {
   const user = await auth();
 
   return (
-    <div>
-      <SignedOut>
-        <Button variant={"outline"}>
-          <SignInButton />
-        </Button>
-      </SignedOut>
-      <SignedIn>
-        <UserButton />
-      </SignedIn>
+    <div className="grid grid-cols-1 lg:grid-cols-10 gaps-6">
+      <div className="lg:col-span-6">{user ? <CreatePost /> : null}</div>
+      <div className="lg:col-span-4"></div>
     </div>
   );
 }
