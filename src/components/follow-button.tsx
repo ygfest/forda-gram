@@ -6,7 +6,7 @@ import { auth } from "@clerk/nextjs/server";
 import { toggleFollow } from "../../actions/user.action";
 import toast from "react-hot-toast";
 
-function FollowButton(userId: { userId: string }) {
+function FollowButton({ userId }: { userId: string }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFollow = async () => {
