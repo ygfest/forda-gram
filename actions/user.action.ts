@@ -1,5 +1,8 @@
+"use server";
+
 import { prisma } from "@/lib/prisma";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 export async function syncUser() {
   try {
@@ -116,5 +119,56 @@ export async function getRandomUsers() {
     return randomUsers;
   } catch (error) {
     console.log("Error getting random users:", error);
+  }
+}
+
+export async function toggleFollow(targetUserId: string) {
+  try {
+    const userId = await getDbUserId();
+    if (!userId) return;
+
+    if (userId === targetUserId) return new Error("You cannot follow yourself");
+
+    const existingFollow = await prisma.follows.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId: userId,
+          followingId: targetUserId,
+        },
+      },
+    });
+
+    if (existingFollow) {
+      await prisma.follows.delete({
+        where: {
+          followerId_followingId: {
+            followerId: userId,
+            followingId: targetUserId,
+          },
+        },
+      });
+    } else {
+      await prisma.$transaction([
+        prisma.follows.create({
+          data: {
+            followerId: userId,
+            followingId: targetUserId,
+          },
+        }),
+        prisma.notification.create({
+          data: {
+            type: "FOLLOW",
+            userId: targetUserId,
+            creatorId: userId,
+          },
+        }),
+      ]);
+    }
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.log("Error following user");
+    return { success: false, error: "Error following user" };
   }
 }
