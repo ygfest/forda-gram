@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "./ui/button";
 import {
   AlertDialog,
@@ -11,13 +13,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { deleteUsefromDb } from "../../actions/user.action";
+import toast from "react-hot-toast";
 
 function DeleteUser() {
   const handleDeleteUser = async () => {
     try {
       await deleteUsefromDb();
+      toast.success("Successfully deleted user");
     } catch (error) {
       console.error("Error deleting user:", error);
+      toast.error("Error deleting user");
     }
   };
 

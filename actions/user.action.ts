@@ -36,9 +36,8 @@ export async function syncUser() {
 
 export async function deleteUsefromDb() {
   try {
-    const { userId } = await auth();
-
-    if (!userId) return;
+    const userId = await getDbUserId();
+    if (!userId) return null;
 
     const deletedUser = await prisma.user.delete({
       where: {
@@ -46,9 +45,10 @@ export async function deleteUsefromDb() {
       },
     });
 
-    return deletedUser;
+    return { success: true, deletedUser };
   } catch (error) {
     console.error("Error Deleting user:", error);
+    return { success: false, error: "Error deleting user" };
   }
 }
 
@@ -71,7 +71,7 @@ export async function getUserDataFromDb(clerkId: string) {
 
 export async function getDbUserId() {
   const { userId: clerkId } = await auth();
-  if (!clerkId) return new Error("Unauthorized");
+  if (!clerkId) return null;
 
   const user = await getUserDataFromDb(clerkId);
 
@@ -83,6 +83,7 @@ export async function getDbUserId() {
 export async function getRandomUsers() {
   try {
     const userId = await getDbUserId();
+
     if (!userId) return [];
 
     const randomUsers = await prisma.user.findMany({
